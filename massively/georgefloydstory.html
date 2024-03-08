@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scrollytelling Page</title>
+  <link rel="stylesheet" href="https://unpkg.com/waypoints/lib/noframework.waypoints.min.css">
+  <style>
+    /* Placeholder styles */
+    section {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+    }
+    .section-odd {
+      background-color: #f0f0f0;
+    }
+    .section-even {
+      background-color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+
+  <section class="section-odd">
+    <div>
+      <p>Placeholder Content for Section 1</p>
+    </div>
+  </section>
+
+  <section class="section-even">
+    <div>
+      <p>Placeholder Content for Section 2</p>
+    </div>
+  </section>
+
+  <section class="section-odd">
+    <div>
+      <p>Placeholder Content for Section 3</p>
+    </div>
+  </section>
+
+  <!-- Include Waypoints library -->
+  <script src="https://unpkg.com/waypoints/lib/noframework.waypoints.min.js"></script>
+  
+  <script>
+    // Initialize Waypoints for scrolling
+    var sections = document.querySelectorAll('section');
+    var waypoints = [];
+    sections.forEach(function(section) {
+      var waypoint = new Waypoint({
+        element: section,
+        handler: function(direction) {
+          console.log('Scrolled to ' + section.className);
+          // You can trigger actions based on which section is scrolled to
+        },
+        offset: '50%'
+      });
+      waypoints.push(waypoint);
+    });
+
+    // Additional Waypoints code
+    var graphicEl = document.getElementById('your-graphic-element-id'); // Change 'your-graphic-element-id' to your actual graphic element ID
+
+    var triggerEls = document.querySelectorAll('.your-trigger-element-class'); // Change 'your-trigger-element-class' to your actual trigger element class
+    var waypoints = triggerEls.map(function(el) {
+      var step = +el.getAttribute('data-step');
+
+      return new Waypoint({
+        element: el,
+        handler: function(direction) {
+          var nextStep = direction === 'down' ? step : Math.max(0, step - 1);
+          graphic.update(nextStep);
+        },
+        offset: '50%'
+      });
+    });
+
+    var enterWaypoint = new Waypoint({
+      element: graphicEl,
+      handler: function(direction) {
+        var fixed = direction === 'down';
+        var bottom = false;
+        toggle(fixed, bottom);
+      },
+    });
+
+    var exitWaypoint = new Waypoint({
+      element: graphicEl,
+      handler: function(direction) {
+        var fixed = direction === 'up';
+        var bottom = !fixed;
+        toggle(fixed, bottom);
+      },
+      offset: 'bottom-in-view',
+    });
+  </script>
+
+</body>
+</html>
