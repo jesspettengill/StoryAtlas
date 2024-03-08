@@ -1,31 +1,54 @@
 {
-    "type": "FeatureCollection",
-    "features": [
-      {
-        "type": "Feature",
-        "properties": {
-          "layer": "Layer1",
-          "time": "YYYY-MM-DDTHH:MM:SS",
-          "magnitude": value
-        },
-        "geometry": {
-          "type": "Point",
-          "coordinates": [longitude, latitude]
-        }
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "layer": "Layer1",
+        "time": "2023-01-01T08:00:00",
+        "magnitude": 7.5
       },
-      {
-        "type": "Feature",
-        "properties": {
-          "layer": "Layer2",
-          "time": "YYYY-MM-DDTHH:MM:SS",
-          "magnitude": value
-        },
-        "geometry": {
-          "type": "Point",
-          "coordinates": [longitude, latitude]
-        }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.9857, 40.7484]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "layer": "Layer1",
+        "time": "2022-12-15T12:30:00",
+        "magnitude": 6.8
       },
-      // More features...
-    ]
-  }
-  
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-77.0369, 38.9072]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "layer": "Layer2",
+        "time": "2022-11-20T17:45:00",
+        "magnitude": 5.2
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-118.2437, 34.0522]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "layer": "Layer2",
+        "time": "2023-02-05T09:15:00",
+        "magnitude": 4.9
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.0059, 40.7128]
+      }
+    }
+    // Add more features
+  ]
+}

@@ -1,56 +1,67 @@
-// Define your MapBox map
+// Define your MapBox access token
 mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
-var map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11',
-    center: [longitude, latitude], // Center coordinates
-    zoom: 10 // Initial zoom level
-});
 
-// Load and add your GeoJSON data to the map
-map.on('load', function () {
-    map.addSource('points', {
-        type: 'geojson',
-        data: 'your_geojson_data.geojson' // Path to your GeoJSON file
+// Function to create and configure a MapBox map
+function createMap(containerId, style, center, zoom, geojsonData) {
+    var map = new mapboxgl.Map({
+        container: containerId,
+        style: style,
+        center: center,
+        zoom: zoom
     });
 
-    // Define styles for each layer
-    var layerStyles = {
-        Layer1: {
-            'circle-color': 'blue',
-            'circle-radius': 6
-        },
-        Layer2: {
-            'circle-color': 'red',
-            'circle-radius': 6
-        },
-        // Add more layers and styles as needed
-    };
-
-    // Add a layer for each layer in the GeoJSON data
-    for (var layer in layerStyles) {
-        map.addLayer({
-            'id': layer,
-            'type': 'circle',
-            'source': 'points',
-            'filter': ['==', 'layer', layer],
-            'paint': layerStyles[layer]
+    map.on('load', function () {
+        map.addSource('points', {
+            type: 'geojson',
+            data: geojsonData
         });
-    }
 
-    // Add a temporal slider control
-    var slider = document.getElementById('slider');
-    slider.addEventListener('input', function(e) {
-        var time = parseInt(e.target.value);
-        // Update the time filter for each layer
+        // Define styles for each layer
+        var layerStyles = {
+            Layer1: {
+                'circle-color': 'blue',
+                'circle-radius': 6
+            },
+            Layer2: {
+                'circle-color': 'red',
+                'circle-radius': 6
+            }
+            // Add more layers and styles as needed
+        };
+
+        // Add a layer for each layer in the GeoJSON data
         for (var layer in layerStyles) {
-            map.setFilter(layer, ['<=', 'time', time]);
+            map.addLayer({
+                'id': layer,
+                'type': 'circle',
+                'source': 'points',
+                'filter': ['==', 'layer', layer],
+                'paint': layerStyles[layer]
+            });
         }
-    });
-});
 
-// Update the slider's max value based on the maximum time in the dataset
-function setSliderMaxValue(maxTime) {
-    var slider = document.getElementById('slider');
-    slider.max = maxTime;
+        // Function to handle layer selection
+        function handleLayerChange() {
+            var selectedLayer = document.querySelector('input[name="layer"]:checked').value;
+
+            // Show/hide layers based on selection
+            for (var layer in layerStyles) {
+                if (layer === selectedLayer) {
+                    map.setLayoutProperty(layer, 'visibility', 'visible');
+                } else {
+                    map.setLayoutProperty(layer, 'visibility', 'none');
+                }
+            }
+        }
+
+        // Add event listener for radio buttons
+        document.querySelectorAll('input[name="layer"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                handleLayerChange();
+            });
+        });
+    });
 }
+
+// Example usage
+createMap('map1', 'mapbox://styles/mapbox/streets-v11', [-73.9857, 40.7484], 10, 'data1.geojson');
