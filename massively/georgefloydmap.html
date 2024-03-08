@@ -2,59 +2,76 @@
 <html>
 <head>
     <meta charset='utf-8' />
-    <title>George Floyd</title>
+    <title>Map with Temporal Slider and Controls</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
     <style>
         #map { position: absolute; top: 0; bottom: 30px; width: 100%; }
-        #slider { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 300px; }
-        #backButton { position: absolute; bottom: 5px; left: 10px; }
-        #legend { position: absolute; top: 10px; left: 10px; background-color: white; padding: 10px; border-radius: 5px; }
+        #slider-container { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); }
+        #slider { width: 300px; display: inline-block; vertical-align: middle; }
+        #controls { display: inline-block; vertical-align: middle; margin-left: 10px; }
     </style>
 </head>
 <body>
 
 <div id='map'></div>
-<input id='slider' type='range' min='0' max='100' step='1' value='0' />
-<button id='backButton'>Back</button>
-<div id="legend">
-    <input type="radio" name="layer" id="layer1" value="Layer1" checked>
-    <label for="layer1">Layer 1</label><br>
-    <input type="radio" name="layer" id="layer2" value="Layer2">
-    <label for="layer2">Layer 2</label>
+<div id='slider-container'>
+    <input id='slider' type='range' min='0' max='100' step='1' value='0' />
+    <div id='controls'>
+        <button id='playButton'>Play</button>
+        <button id='pauseButton'>Pause</button>
+        <button id='restartButton'>Restart</button>
+    </div>
 </div>
 
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
 <script>
-    mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+    mapboxgl.accessToken = 'pk.eyJ1IjoicGV0dGVuZzkiLCJhIjoiY2x0aXdvd3Z3MGl5MDJrcmhuNGVpaDNwcSJ9.nmZHgXDOO626XlZ_D5ztBg';
     var map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/mapbox/streets-v11', // Your custom style URL
         center: [-73.9857, 40.7484], // Center coordinates
-        zoom: 10 // Initial zoom level
+        zoom: 5 // Initial zoom level
     });
 
-    // Add your MapBox map code here
+    // Define your temporal slider and other controls
+    var slider = document.getElementById('slider');
+    var playButton = document.getElementById('playButton');
+    var pauseButton = document.getElementById('pauseButton');
+    var restartButton = document.getElementById('restartButton');
+    var autoplayInterval;
 
-    // Function to handle layer selection
-    function handleLayerChange() {
-        var selectedLayer = document.querySelector('input[name="layer"]:checked').value;
-
-        // Show/hide layers based on selection
+    // Function to handle slider change
+    slider.addEventListener('input', function(e) {
+        var time = parseInt(e.target.value);
+        // Update the time filter for each layer
         for (var layer in layerStyles) {
-            if (layer === selectedLayer) {
-                map.setLayoutProperty(layer, 'visibility', 'visible');
-            } else {
-                map.setLayoutProperty(layer, 'visibility', 'none');
-            }
+            map.setFilter(layer, ['<=', 'time', time]);
         }
-    }
+    });
 
-    // Add event listener for radio buttons
-    document.querySelectorAll('input[name="layer"]').forEach(function(radio) {
-        radio.addEventListener('change', function() {
-            handleLayerChange();
-        });
+    // Function to handle play button click
+    playButton.addEventListener('click', function() {
+        autoplayInterval = setInterval(function() {
+            var currentValue = parseInt(slider.value);
+            if (currentValue < parseInt(slider.max)) {
+                slider.value = currentValue + 1;
+                slider.dispatchEvent(new Event('input'));
+            } else {
+                clearInterval(autoplayInterval);
+            }
+        }, 1000); // Change interval as needed (e.g., 1000ms = 1 second)
+    });
+
+    // Function to handle pause button click
+    pauseButton.addEventListener('click', function() {
+        clearInterval(autoplayInterval);
+    });
+
+    // Function to handle restart button click
+    restartButton.addEventListener('click', function() {
+        slider.value = 0;
+        slider.dispatchEvent(new Event('input'));
     });
 
 </script>
