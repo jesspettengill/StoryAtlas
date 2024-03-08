@@ -1,0 +1,31 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "layer": "Layer1",
+          "time": "YYYY-MM-DDTHH:MM:SS",
+          "magnitude": value
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [longitude, latitude]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "layer": "Layer2",
+          "time": "YYYY-MM-DDTHH:MM:SS",
+          "magnitude": value
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [longitude, latitude]
+        }
+      },
+      // More features...
+    ]
+  }
+  

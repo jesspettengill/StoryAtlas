@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Map with Temporal Slider</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        #slider { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 300px; }
+    </style>
+</head>
+<body>
+
+<div id='map'></div>
+<input id='slider' type='range' min='0' max='100' step='1' value='0' />
+
+<script>
+    mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-74.5, 40], // Center coordinates
+        zoom: 9 // Initial zoom level
+    });
+
+    // Add your MapBox map code here
+
+</script>
+
+</body>
+</html>
