@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>StoryAtlas</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<a href="index.html" class="logo">StoryAtlas</a>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="index.html">Projects</a></li>
+							<li><a href="about.html">About</a></li>
+							<li class="active"><a href="methodology.html">Methodology</a></li>
+							<li><a href="guides.html">Guides</a></li>
+						</ul>
+						<ul class="icons">
+							<li><a href="#" class="icon fa-github"><span class="label">GitHub</span></a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<section class="post">
+								<header class="major">
+									<h1>NLP for
+									<br />News Narrative Analysis
+									</h1>
+									<p>An explanatory sequential research design</p>
+								</header>
+									<h3>Introduction</h3>
+									<p>One of the challenges of my project is that not only am I building a digital experience, but I’m attempting a new method of analysis. It is both new to my own research methods toolbox, and it is a process that is rarely used in my field.
+									</p>
+									<p>
+										NLP (or natural language processing) is a computational method that is often used in computation linguistics, social media analysis, and other big data research disciplines. However, in journalism, we tend to be fairly old school. Many of us journalism academics are former practicing journalists. Unless we’re interactive designers, we typically don’t have much training or knowledge of coding languages. And as researchers, we’re rarely trained in computational methods, but we are saturated in discourse analysis methods. Even quantitative studies like content analyses are typically coded by hand. But when looking at news narratives, hand coding makes analysis of large data trends extremely labor intensive.
+									</p>
+									<p>
+										For my project, I wanted to look at the differences between a national newspaper (The New York Times) and a local newspaper (The StarTribune) in coverage of the murder of George Floyd. What are the narratives that these papers are presenting to their audiences about the same event? How do they change over time? What meaning are they trying to make and imprint in our collective memory? The sample size I was looking at for this project quickly became overwhelming. In just the first month of coverage, there were 372 articles collected for this project (252 New York Times articles and 120 StarTribune articles). There would be no way I could conduct a discourse analysis of a sample size that large in a semester.
+									</p>
+									<h3>Open Source Tools</h3>
+									<p>
+										Enter NLP. As someone who traditionally gravitates toward qualitative methods, NLP was an intimidating prospect. I spent many days agonizing over which NLP application to use. Many studies I have read use Google’s Word2Vec. My fellow CHI fellow Phil used spaCy. Eventually, I landed on using Natural Language Toolkit (NLTK). As an open-source NLP project, it has the advantage of the wisdom of crowds where the community is constantly updating and improving the project. My goal behind using NLP was to use it as a framing tool for further narrative analysis. In a sample as large as the one for this project, it can be overwhelming when attempting to “find a way in” to the data. The aim is to use NLP to identify the words that were most frequently used in relation to George Floyd’s name. These word embeddings would provide a quantitative starting point to further examine qualitative data: the narratives media created around Floyd’s murder.
+									</p>
+									<h3>Method</h3>
+									<p>
+										Step 1. Using Proquest Newsstream, I collected all articles from May 25, 2020 to June 1, 2021, using the search phrase “George Floyd” (N= 1,214).
+									</p>
+									<p>
+										Step 2. The data was collated by publication and publishing date.
+									</p>
+									<p>
+										Step 3. The 10 most common word embeddings for the articles published within a given month were assessed using NLTK’s NLP code. Stop words, such as “said” and “including” were incorporated into the analysis process. This resulted in 47 word embeddings for the New York Times sample and 35 embeddings for the StarTribune sample. (See collected data).
+									</p>
+									<p>
+										Step 4. These embeddings will be used as a “way in” to analyze the data qualitatively. For example, “police” was consistently the most-used word in relation to stories about George Floyd, regardless of publication or publication date. The next step will be to qualitatively examine how these words play into the larger narrative conveyed about the “news event” we refer to as the murder of George Floyd.
+									</p>
+									<h3>Future Research</h3>
+									<p>Now with the quantitative portion of the data collected, further research can be conducted with the qualitative narratives collected in the sample. Some points of interest based on the collected data include: the use of "death" versus "murder", and the <em>Star Tribune's</em> focus on Chauvin's trial versus <em>The New York Time's</em> focus on the implications for the 2020 presidential election.</p>
+							</section>
+
+					</div>				
+
+				<!-- Footer -->
+				<div>
+					<p style="text-align:center"><a href="mailto:jess.m.pettengill@gmail.com" class="button large">Contact</a></p>
+					<p xmlns:cc="http://creativecommons.org/ns#" style="text-align:center">This work is licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC-SA 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1"></a></p>
+					<p style="text-align:center"><a href="https://html5up.net">HTML5 UP</a></p>
+					<p style="text-align: center"><a href="https://unsplash.com/@_imd">Background photo: Zoe @_imd</a></p>
+				</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
