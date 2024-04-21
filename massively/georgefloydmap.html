@@ -9,19 +9,25 @@
         #map { position: absolute; top: 0; bottom: 30px; width: 100%; }
         #slider-container { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); }
         #slider { width: 300px; display: inline-block; vertical-align: middle; }
+        #date-display { display: inline-block; margin-left: 10px; font-size: 16px; }
         #controls { display: inline-block; vertical-align: middle; margin-left: 10px; }
+        #layer-filter { position: absolute; top: 10px; right: 10px; }
     </style>
 </head>
 <body>
 
 <div id='map'></div>
 <div id='slider-container'>
-    <input id='slider' type='range' min='0' max='100' step='1' value='0' />
+    <input id='slider' type='range' min='0' max='11' step='1' value='0' />
+    <div id='date-display'>Selected Date: <span id="selected-date"></span></div>
     <div id='controls'>
         <button id='playButton'>Play</button>
         <button id='pauseButton'>Pause</button>
         <button id='restartButton'>Restart</button>
     </div>
+</div>
+<div id="layer-filter">
+    <h3>Layer Filter</h3>
 </div>
 
 <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
@@ -29,10 +35,72 @@
     mapboxgl.accessToken = 'pk.eyJ1IjoicGV0dGVuZzkiLCJhIjoiY2x0aXdvd3Z3MGl5MDJrcmhuNGVpaDNwcSJ9.nmZHgXDOO626XlZ_D5ztBg';
     var map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11', // Your custom style URL
+        style: 'mapbox://styles/mapbox/light-v10', // Your custom style URL
         center: [-73.9857, 40.7484], // Center coordinates
         zoom: 5 // Initial zoom level
     });
+
+    var geojsonUrl = 'massively/assets/geojson/georgefloydNYT.geojson';
+
+    // Fetch GeoJSON data from the local file
+    fetch(geojsonUrl)
+        .then(response => response.json())
+        .then(data => {
+            // Add the GeoJSON data as a source to the map
+            map.on('load', function() {
+                map.addSource('points', {
+                    'type': 'geojson',
+                    'data': data
+                });
+
+                // Add a layer for each property
+                for (var property in data.features[0].properties) {
+                    if (property !== 'Word' && property !== 'Publication') {
+                        var layerId = property.replace(/\//g, '_'); // Replace '/' with '_' in property names
+                        map.addLayer({
+                            'id': layerId,
+                            'type': 'circle',
+                            'source': 'points',
+                            'paint': {
+                                'circle-radius': [
+                                    'interpolate',
+                                    ['linear'],
+                                    ['get', property],
+                                    0, 5,
+                                    1000, 50
+                                ],
+                                'circle-color': 'blue',
+                                'circle-opacity': 0.5
+                            },
+                            'filter': ['==', 'Word', '']
+                        });
+                    }
+                }
+
+                // Create layer filter radio buttons
+                var layerFilterContainer = document.getElementById('layer-filter');
+                var uniqueWords = new Set(data.features.map(feature => feature.properties.Word));
+                uniqueWords.forEach(word => {
+                    var radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = 'layer';
+                    radio.id = word;
+                    radio.value = word;
+                    radio.checked = true; // By default, all layers are checked
+                    radio.addEventListener('change', function(e) {
+                        var visibility = e.target.checked ? 'visible' : 'none';
+                        map.setLayoutProperty(e.target.value.replace(/\//g, '_'), 'visibility', visibility);
+                    });
+                    var label = document.createElement('label');
+                    label.htmlFor = word;
+                    label.textContent = word;
+                    layerFilterContainer.appendChild(radio);
+                    layerFilterContainer.appendChild(label);
+                    layerFilterContainer.appendChild(document.createElement('br'));
+                });
+            });
+        })
+        .catch(error => console.error('Error fetching GeoJSON data:', error));
 
     // Define your temporal slider and other controls
     var slider = document.getElementById('slider');
@@ -41,13 +109,14 @@
     var restartButton = document.getElementById('restartButton');
     var autoplayInterval;
 
+    var months = ["05/01/2020", "06/01/2020", "07/01/2020", "08/01/2020", "09/01/2020", "10/01/2020", "11/01/2020", "12/01/2020", "1/1/2021", "2/1/2021", "3/1/2021", "4/1/2021", "5/1/2021"];
+
     // Function to handle slider change
     slider.addEventListener('input', function(e) {
-        var time = parseInt(e.target.value);
-        // Update the time filter for each layer
-        for (var layer in layerStyles) {
-            map.setFilter(layer, ['<=', 'time', time]);
-        }
+        var monthIndex = parseInt(e.target.value);
+        var selectedDate = months[monthIndex];
+        document.getElementById('selected-date').textContent = selectedDate;
+        // You can perform any action here based on the selected month
     });
 
     // Function to handle play button click
