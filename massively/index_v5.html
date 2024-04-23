@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Display with Controls</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        .controls { position: absolute; top: 10px; left: 10px; z-index: 1; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 5px;}
+        .filter-box { position: absolute; top: 120px; left: 10px; z-index: 1; background-color: #fff; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div class="controls">
+    <input id="slider" type="range" min="0" max="12" step="1" value="0">
+    <span id="selected-date">05/01/2020</span>
+    <button id="playButton">Play</button>
+    <button id="pauseButton">Pause</button>
+    <button id="restartButton">Restart</button>
+</div>
+
+<div class="filter-box" id="layer-filter">
+    <h3>Filter</h3>
+    <!-- Removed Publications filter -->
+    <fieldset>
+        <legend>Words</legend>
+        <div id="word-options"></div>
+    </fieldset>
+</div>
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic3dpdGNoMTEzIiwiYSI6ImNsdmExeGV5cDExa28ya3BoeXV4aDl5dDAifQ.kA0hyBmIT403fKQHXPeh0A';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/light-v10',
+        center: [-73.9857, 40.7484],
+        zoom: 5
+    });
+
+    const geojson = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [-73.9857, 40.7484]
+                },
+                "properties": {
+                    "Word": "Test",
+                    "05/01/2020": 10,
+                    "06/01/2020": 20,
+                    "07/01/2020": 30,
+                    "08/01/2020": 40,
+                    "09/01/2020": 50,
+                    "10/01/2020": 60,
+                    "11/01/2020": 70,
+                    "12/01/2020": 80,
+                    "1/1/2021": 90,
+                    "2/1/2021": 100,
+                    "3/1/2021": 110,
+                    "4/1/2021": 120,
+                    "5/1/2021": 130
+                }
+            },
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [-72.0060, 42.7128]
+                },
+                "properties": {
+                    "Word": "Example2",
+                    "05/01/2020": 20,
+                    "06/01/2020": 30,
+                    "07/01/2020": 40,
+                    "08/01/2020": 50,
+                    "09/01/2020": 60,
+                    "10/01/2020": 70,
+                    "11/01/2020": 80,
+                    "12/01/2020": 90,
+                    "1/1/2021": 100,
+                    "2/1/2021": 110,
+                    "3/1/2021": 120,
+                    "4/1/2021": 130,
+                    "5/1/2021": 140
+                }
+            }
+        ]
+    };
+
+    map.on('load', function () {
+        map.addSource('points', {
+            'type': 'geojson',
+            'data': geojson
+        });
+
+        geojson.features.forEach((feature, index) => {
+            const layerId = 'layer_' + index;
+            map.addLayer({
+                'id': layerId,
+                'type': 'circle',
+                'source': 'points',
+                'paint': {
+                    'circle-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['get', "05/01/2020"],
+                        0, 5,
+                        130, 50
+                    ],
+                    'circle-color': 'blue',
+                    'circle-opacity': 0.5
+                },
+                'filter': ['==', ['get', 'Word'], feature.properties.Word]
+            });
+        });
+
+        // Populate word filter options with radio buttons
+        const wordOptions = document.getElementById('word-options');
+        const uniqueWords = new Set(geojson.features.map(feature => feature.properties.Word));
+        uniqueWords.forEach(word => {
+            const option = document.createElement('input');
+            option.type = 'radio';
+            option.name = 'word';
+            option.value = word;
+            option.checked = true;
+            option.addEventListener('change', updateFilters);
+            const label = document.createElement('label');
+            label.htmlFor = word;
+            label.textContent = word;
+            wordOptions.appendChild(option);
+            wordOptions.appendChild(label);
+            wordOptions.appendChild(document.createElement('br'));
+        });
+    });
+
+    function updateFilters() {
+        const wordFilters = Array.from(document.querySelectorAll('input[name="word"]:checked')).map(input => input.value);
+
+        geojson.features.forEach((feature, index) => {
+            const layerId = 'layer_' + index;
+            if (wordFilters.includes(feature.properties.Word)) {
+                map.setLayoutProperty(layerId, 'visibility', 'visible');
+            } else {
+                map.setLayoutProperty(layerId, 'visibility', 'none');
+            }
+        });
+    }
+
+    const slider = document.getElementById('slider');
+    const selectedDateSpan = document.getElementById('selected-date');
+    const months = ["05/01/2020", "06/01/2020", "07/01/2020", "08/01/2020", "09/01/2020", "10/01/2020", "11/01/2020", "12/01/2020", "1/1/2021", "2/1/2021", "3/1/2021", "4/1/2021", "5/1/2021"];
+
+    slider.addEventListener('input', function () {
+        const monthIndex = parseInt(slider.value);
+        const selectedDate = months[monthIndex];
+        selectedDateSpan.textContent = selectedDate;
+        updateMapForMonth(selectedDate);
+    });
+
+    function updateMapForMonth(selectedDate) {
+        geojson.features.forEach((feature, index) => {
+            const layerId = 'layer_' + index;
+            const dateValue = feature.properties[selectedDate];
+            map.setPaintProperty(layerId, 'circle-radius', [
+                'interpolate',
+                ['linear'],
+                ['literal', dateValue],
+                0, 5,
+                130, 50
+            ]);
+        });
+    }
+
+    const playButton = document.getElementById('playButton');
+    const pauseButton = document.getElementById('pauseButton');
+    const restartButton = document.getElementById('restartButton');
+    let autoplayInterval;
+
+    playButton.onclick = function() {
+        if (autoplayInterval) return;
+        autoplayInterval = setInterval(() => {
+            let currentValue = parseInt(slider.value);
+            let maxValue = parseInt(slider.max);
+            if (currentValue < maxValue) {
+                slider.value = currentValue + 1;
+                slider.dispatchEvent(new Event('input'));
+            } else {
+                clearInterval(autoplayInterval);
+                autoplayInterval = null;
+            }
+        }, 1000);
+    };
+
+    pauseButton.onclick = function() {
+        clearInterval(autoplayInterval);
+        autoplayInterval = null;
+    };
+
+    restartButton.onclick = function() {
+        clearInterval(autoplayInterval);
+        autoplayInterval = null;
+        slider.value = 0;
+        slider.dispatchEvent(new Event('input'));
+    };
+</script>
+
+</body>
+</html>

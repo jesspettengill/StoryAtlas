@@ -1,55 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset='utf-8' />
-  <title>Mapbox GL JS</title>
-  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-  <script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
-  <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
-  <style>
-    body { margin: 0; padding: 0; }
-    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Display with Controls</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        .controls { position: absolute; top: 10px; left: 10px; z-index: 1; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 5px;}
+        .filter-box { position: absolute; top: 120px; left: 10px; z-index: 1; background-color: #fff; padding: 10px; border-radius: 5px; }
+    </style>
 </head>
 <body>
 
-<div id='map'></div>
+<div id="map"></div>
+
+<div class="controls">
+    <input id="slider" type="range" min="0" max="12" step="1" value="0">
+    <span id="selected-date">05/01/2020</span>
+    <button id="playButton">Play</button>
+    <button id="pauseButton">Pause</button>
+    <button id="restartButton">Restart</button>
+</div>
+
+<div class="filter-box" id="layer-filter">
+    <h3>Filter</h3>
+    <!-- Removed Publications filter -->
+    <fieldset>
+        <legend>Words</legend>
+        <div id="word-options"></div>
+    </fieldset>
+</div>
 
 <script>
-  mapboxgl.accessToken = 'pk.eyJ1IjoicGV0dGVuZzkiLCJhIjoiY2x0aXdvd3Z3MGl5MDJrcmhuNGVpaDNwcSJ9.nmZHgXDOO626XlZ_D5ztBg';
-
-  var map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/dark-v10',
-    center: [-73.98513, 40.758896], // starting position
-    zoom: 10 // starting zoom
-  });
-
-  // Add GeoJSON data
-  map.on('load', function() {
-    map.addSource('points', {
-      'type': 'geojson',
-      'data': 'data.massively/assets/geojson/georgefloydNYT.geojson' // Replace 'data.geojson' with the path to your GeoJSON file
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic3dpdGNoMTEzIiwiYSI6ImNsdmExeGV5cDExa28ya3BoeXV4aDl5dDAifQ.kA0hyBmIT403fKQHXPeh0A';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/light-v10',
+        center: [-93.27665, 44.99061], // Adjusted to center over your data points
+        zoom: 5
     });
 
-    map.addLayer({
-      'id': 'points',
-      'type': 'circle',
-      'source': 'points',
-      'paint': {
-        // Use data-driven styling to dynamically adjust the circle radius based on the frequency property
-        'circle-radius': [
-          'interpolate',
-          ['linear'],
-          ['get', '05/01/2020'], // Adjust to use the appropriate date
-          0, 5, // If frequency is 0, set radius to 5
-          100, 50 // If frequency is 100, set radius to 50
-        ],
-        'circle-color': 'blue',
-        'circle-opacity': 0.8
-      }
+    map.on('load', function () {
+        map.addSource('points', {
+            'type': 'geojson',
+            'data': '/Users/jess/Documents/GitHub/StoryAtlas/massively/assets/geojson/updated_georgefloydNYT.geojson' // Ensure the file path is correct
+        });
+
+        map.addLayer({
+            'id': 'wordsLayer',
+            'type': 'circle',
+            'source': 'points',
+            'paint': {
+                'circle-radius': 10, 
+                'circle-color': 'blue',
+                'circle-opacity': 0.5
+            },
+            'filter': ['==', ['get', 'Date'], "05/01/2020"]
+        });
+
+        const slider = document.getElementById('slider');
+        const selectedDateSpan = document.getElementById('selected-date');
+        const months = ["05/01/2020", "06/01/2020", "07/01/2020", "08/01/2020", "09/01/2020", "10/01/2020", "11/01/2020", "12/01/2020", "1/1/2021", "2/1/2021", "3/1/2021", "4/1/2021", "5/1/2021"];
+
+        slider.addEventListener('input', function () {
+            const selectedDate = months[parseInt(slider.value)];
+            selectedDateSpan.textContent = selectedDate;
+            map.setFilter('wordsLayer', ['==', ['get', 'Date'], selectedDate]);
+        });
     });
-  });
 </script>
 
 </body>
