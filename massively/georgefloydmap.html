@@ -1,148 +1,677 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset='utf-8' />
-    <title>Map with Temporal Slider and Controls</title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Display with Controls</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
     <style>
-        #map { position: absolute; top: 0; bottom: 30px; width: 100%; }
-        #slider-container { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); }
-        #slider { width: 300px; display: inline-block; vertical-align: middle; }
-        #date-display { display: inline-block; margin-left: 10px; font-size: 16px; }
-        #controls { display: inline-block; vertical-align: middle; margin-left: 10px; }
-        #layer-filter { position: absolute; top: 10px; right: 10px; }
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        .controls { position: absolute; top: 10px; left: 10px; z-index: 1; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 5px;}
+        .filter-box { position: absolute; top: 100px; left: 10px; z-index: 1; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 5px; }
+        .introduction { position: absolute; bottom: 10px; left: 10px; z-index: 2; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 5px;}
+
     </style>
 </head>
 <body>
 
-<div id='map'></div>
-<div id='slider-container'>
-    <input id='slider' type='range' min='0' max='11' step='1' value='0' />
-    <div id='date-display'>Selected Date: <span id="selected-date"></span></div>
-    <div id='controls'>
-        <button id='playButton'>Play</button>
-        <button id='pauseButton'>Pause</button>
-        <button id='restartButton'>Restart</button>
-    </div>
-</div>
-<div id="layer-filter">
-    <h3>Layer Filter</h3>
+<div id="map"></div>
+
+<div class="controls">
+    <input id="slider" type="range" min="0" max="12" step="1" value="0">
+    <span id="selected-date">05/01/2020</span>
+    <button id="playButton">Play</button>
+    <button id="pauseButton">Pause</button>
+    <button id="restartButton">Restart</button>
 </div>
 
-<script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+<div class="filter-box" id="layer-filter">
+    <h3>Most Frequently Used Words 
+    <br />in Articles about George Floyd</h3>
+    <fieldset>
+        <legend>Words</legend>
+        <div id="word-options"></div>
+    </fieldset>
+</div>
+
+<div class="introduction">
+    <h3>About StoryAtlas</h3>
+    <p>StoryAtlas maps narratives published about major news events by analyzing the most frequently used words in news articles.</p>
+    <p>This map examines news coverage of the murder of George Floyd from May 25, 2020–June 1, 2021 and compares coverage between the Minneapolise Star Tribune and The New York Times.</p>
+    <p><a href="massively/index.html">Learn more about StoryAtlas</a></p>
+    <p><a href="https://docs.google.com/spreadsheets/d/1Mv0RJ3oGUwoqim5ROQch2pw0dMBN53RXYPeP49T-53Q/edit?usp=sharing">See data</a></p>
+</div>
 <script>
-    mapboxgl.accessToken = 'pk.eyJ1IjoicGV0dGVuZzkiLCJhIjoiY2x0aXdvd3Z3MGl5MDJrcmhuNGVpaDNwcSJ9.nmZHgXDOO626XlZ_D5ztBg';
-    var map = new mapboxgl.Map({
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic3dpdGNoMTEzIiwiYSI6ImNsdmExeGV5cDExa28ya3BoeXV4aDl5dDAifQ.kA0hyBmIT403fKQHXPeh0A';
+    const map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/light-v10', // Your custom style URL
-        center: [-73.9857, 40.7484], // Center coordinates
-        zoom: 5 // Initial zoom level
+        style: 'mapbox://styles/mapbox/light-v10',
+        center: [-73.9857, 40.7484],
+        zoom: 4
     });
 
-    var geojsonUrl = 'massively/assets/geojson/georgefloydNYT.geojson';
+    const geojson = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "Black",
+        "05/01/2020": 46,
+        "06/01/2020": 232,
+        "07/01/2020": 127,
+        "08/01/2020": 147,
+        "09/01/2020": 92,
+        "10/01/2020": 105,
+        "11/01/2020": 33,
+        "12/01/2020": 100,
+        "1/1/2021": 78,
+        "2/1/2021": 18,
+        "3/1/2021": 124,
+        "4/1/2021": 139,
+        "5/1/2021": 86,
+        "time": ["05/01/2020", "06/01/2020", "07/01/2020", "08/01/2020", "09/01/2020", "10/01/2020", "11/01/2020", "12/01/2020", "1/1/2021", "2/1/2021", "3/1/2021", "4/1/2021", "5/1/2021"],
+        "frequency": [46, 232, 127, 147, 92, 105, 33, 100, 78, 18, 124, 139, 86]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.27665, 44.99061]
+      }
+    },  
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "Black",
+        "05/01/2020": 134,
+        "06/01/2020": 966,
+        "07/01/2020": 397,
+        "08/01/2020": 431,
+        "09/01/2020": 211,
+        "10/01/2020": 191,
+        "11/01/2020": 169,
+        "12/01/2020": 29,
+        "1/1/2021": 38,
+        "2/1/2021": 96,
+        "3/1/2021": 63,
+        "4/1/2021": 100,
+        "5/1/2021": 286,
+        "Publication": "New York Times"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.98513, 40.758896]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "Chauvin",
+        "05/01/2020": 55,
+        "06/01/2020": 116,
+        "07/01/2020": 57,
+        "08/01/2020": 89,
+        "09/01/2020": 32,
+        "10/01/2020": 55,
+        "11/01/2020": 40,
+        "12/01/2020": 11,
+        "1/1/2021": 34,
+        "2/1/2021": 72,
+        "3/1/2021": 162,
+        "4/1/2021": 294,
+        "5/1/2021": 85,
+        "Publication": "Star Tribune"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.27665, 44.99061]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "community",
+        "05/01/2020": 24,
+        "06/01/2020": 192,
+        "07/01/2020": 88,
+        "08/01/2020": 97,
+        "09/01/2020": 51,
+        "10/01/2020": 39,
+        "11/01/2020": 48,
+        "12/01/2020": 45,
+        "1/1/2021": 26,
+        "2/1/2021": 41,
+        "3/1/2021": 75,
+        "4/1/2021": 82,
+        "5/1/2021": 51,
+        "Publication": "Star Tribune"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.27665, 44.99061]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "death",
+        "05/01/2020": 72,
+        "06/01/2020": 224,
+        "07/01/2020": 90,
+        "08/01/2020": 89,
+        "09/01/2020": 55,
+        "10/01/2020": 63,
+        "11/01/2020": 38,
+        "12/01/2020": 45,
+        "1/1/2021": 54,
+        "2/1/2021": 46,
+        "3/1/2021": 128,
+        "4/1/2021": 166,
+        "5/1/2021": 85,
+        "Publication": "Star Tribune"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.27665, 44.99061]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "death",
+        "05/01/2020": 98,
+        "06/01/2020": 338,
+        "07/01/2020": 68,
+        "08/01/2020": 36,
+        "09/01/2020": 52,
+        "10/01/2020": 35,
+        "11/01/2020": 16,
+        "12/01/2020": 8,
+        "1/1/2021": 4,
+        "2/1/2021": 34,
+        "3/1/2021": 46,
+        "4/1/2021": 126,
+        "5/1/2021": 69,
+        "Publication": "New York Times"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.98513, 40.758896]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "justice",
+        "05/01/2020": 26,
+        "06/01/2020": 114,
+        "07/01/2020": 51,
+        "08/01/2020": 49,
+        "09/01/2020": 38,
+        "10/01/2020": 24,
+        "11/01/2020": 26,
+        "12/01/2020": 25,
+        "1/1/2021": 35,
+        "2/1/2021": 20,
+        "3/1/2021": 63,
+        "4/1/2021": 105,
+        "5/1/2021": 81,
+        "Publication": "Star Tribune"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.27665, 44.99061]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "law",
+        "05/01/2020": 46,
+        "06/01/2020": 381,
+        "07/01/2020": 121,
+        "08/01/2020": 57,
+        "09/01/2020": 61,
+        "10/01/2020": 46,
+        "11/01/2020": 29,
+        "12/01/2020": 5,
+        "1/1/2021": 2,
+        "2/1/2021": 46,
+        "3/1/2021": 39,
+        "4/1/2021": 56,
+        "5/1/2021": 103,
+        "Publication": "New York Times"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.98513, 40.758896]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "murder",
+        "05/01/2020": 28,
+        "06/01/2020": 82,
+        "07/01/2020": 24,
+        "08/01/2020": 40,
+        "09/01/2020": 18,
+        "10/01/2020": 40,
+        "11/01/2020": 12,
+        "12/01/2020": 15,
+        "1/1/2021": 26,
+        "2/1/2021": 46,
+        "3/1/2021": 107,
+        "4/1/2021": 113,
+        "5/1/2021": 55,
+        "Publication": "Star Tribune"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.27665, 44.99061]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "police",
+        "05/01/2020": 195,
+        "06/01/2020": 995,
+        "07/01/2020": 472,
+        "08/01/2020": 384,
+        "09/01/2020": 227,
+        "10/01/2020": 241,
+        "11/01/2020": 127,
+        "12/01/2020": 190,
+        "1/1/2021": 312,
+        "2/1/2021": 231,
+        "3/1/2021": 458,
+        "4/1/2021": 828,
+        "5/1/2021": 280,
+        "Publication": "Star Tribune"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.27665, 44.99061]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "police",
+        "05/01/2020": 680,
+        "06/01/2020": 3313,
+        "07/01/2020": 908,
+        "08/01/2020": 432,
+        "09/01/2020": 349,
+        "10/01/2020": 333,
+        "11/01/2020": 197,
+        "12/01/2020": 79,
+        "1/1/2021": 90,
+        "2/1/2021": 222,
+        "3/1/2021": 354,
+        "4/1/2021": 567,
+        "5/1/2021": 569,
+        "Publication": "New York Times"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.98513, 40.758896]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "president",
+        "05/01/2020": 29,
+        "06/01/2020": 435,
+        "07/01/2020": 157,
+        "08/01/2020": 132,
+        "09/01/2020": 211,
+        "10/01/2020": 108,
+        "11/01/2020": 80,
+        "12/01/2020": 12,
+        "1/1/2021": 5,
+        "2/1/2021": 14,
+        "3/1/2021": 18,
+        "4/1/2021": 51,
+        "5/1/2021": 50,
+        "Publication": "New York Times"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.98513, 40.758896]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "protestors",
+        "05/01/2020": 175,
+        "06/01/2020": 497,
+        "07/01/2020": 179,
+        "08/01/2020": 56,
+        "09/01/2020": 51,
+        "10/01/2020": 60,
+        "11/01/2020": 34,
+        "12/01/2020": 10,
+        "1/1/2021": 14,
+        "2/1/2021": 1,
+        "3/1/2021": 15,
+        "4/1/2021": 17,
+        "5/1/2021": 30,
+        "Publication": "New York Times"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.98513, 40.758896]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "protests",
+        "05/01/2020": 133,
+        "06/01/2020": 608,
+        "07/01/2020": 215,
+        "08/01/2020": 111,
+        "09/01/2020": 60,
+        "10/01/2020": 61,
+        "11/01/2020": 52,
+        "12/01/2020": 8,
+        "1/1/2021": 17,
+        "2/1/2021": 8,
+        "3/1/2021": 45,
+        "4/1/2021": 25,
+        "5/1/2021": 60,
+        "Publication": "New York Times"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.98513, 40.758896]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "public",
+        "05/01/2020": 12,
+        "06/01/2020": 87,
+        "07/01/2020": 99,
+        "08/01/2020": 74,
+        "09/01/2020": 19,
+        "10/01/2020": 43,
+        "11/01/2020": 37,
+        "12/01/2020": 44,
+        "1/1/2021": 46,
+        "2/1/2021": 48,
+        "3/1/2021": 46,
+        "4/1/2021": 59,
+        "5/1/2021": 17,
+        "Publication": "Star Tribune"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.27665, 44.99061]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "public",
+        "05/01/2020": 24,
+        "06/01/2020": 350,
+        "07/01/2020": 129,
+        "08/01/2020": 84,
+        "09/01/2020": 38,
+        "10/01/2020": 48,
+        "11/01/2020": 26,
+        "12/01/2020": 4,
+        "1/1/2021": 10,
+        "2/1/2021": 15,
+        "3/1/2021": 27,
+        "4/1/2021": 55,
+        "5/1/2021": 108,
+        "Publication": "New York Times"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.98513, 40.758896]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "trial",
+        "05/01/2020": 4,
+        "06/01/2020": 8,
+        "07/01/2020": 9,
+        "08/01/2020": 20,
+        "09/01/2020": 18,
+        "10/01/2020": 20,
+        "11/01/2020": 39,
+        "12/01/2020": 22,
+        "1/1/2021": 101,
+        "2/1/2021": 87,
+        "3/1/2021": 207,
+        "4/1/2021": 146,
+        "5/1/2021": 37,
+        "Publication": "Star Tribune"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.27665, 44.99061]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "Trump",
+        "05/01/2020": 50,
+        "06/01/2020": 664,
+        "07/01/2020": 284,
+        "08/01/2020": 147,
+        "09/01/2020": 201,
+        "10/01/2020": 221,
+        "11/01/2020": 155,
+        "12/01/2020": 1,
+        "1/1/2021": 1,
+        "2/1/2021": 0,
+        "3/1/2021": 15,
+        "4/1/2021": 13,
+        "5/1/2021": 59,
+        "Publication": "New York Times"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.98513, 40.758896]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "white",
+        "05/01/2020": 98,
+        "06/01/2020": 535,
+        "07/01/2020": 187,
+        "08/01/2020": 175,
+        "09/01/2020": 131,
+        "10/01/2020": 143,
+        "11/01/2020": 53,
+        "12/01/2020": 12,
+        "1/1/2021": 7,
+        "2/1/2021": 27,
+        "3/1/2021": 25,
+        "4/1/2021": 35,
+        "5/1/2021": 117,
+        "Publication": "New York Times"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.98513, 40.758896]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Word": "white",
+        "05/01/2020": 22,
+        "06/01/2020": 79,
+        "07/01/2020": 52,
+        "08/01/2020": 69,
+        "09/01/2020": 40,
+        "10/01/2020": 39,
+        "11/01/2020": 15,
+        "12/01/2020": 38,
+        "1/1/2021": 16,
+        "2/1/2021": 12,
+        "3/1/2021": 78,
+        "4/1/2021": 73,
+        "5/1/2021": 59,
+        "Publication": "Star Tribune"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-93.27665, 44.99061]
+      }
+    }
+  ]
+}
 
-    // Fetch GeoJSON data from the local file
-    fetch(geojsonUrl)
-        .then(response => response.json())
-        .then(data => {
-            // Add the GeoJSON data as a source to the map
-            map.on('load', function() {
-                map.addSource('points', {
-                    'type': 'geojson',
-                    'data': data
-                });
 
-                // Add a layer for each property
-                for (var property in data.features[0].properties) {
-                    if (property !== 'Word' && property !== 'Publication') {
-                        var layerId = property.replace(/\//g, '_'); // Replace '/' with '_' in property names
-                        map.addLayer({
-                            'id': layerId,
-                            'type': 'circle',
-                            'source': 'points',
-                            'paint': {
-                                'circle-radius': [
-                                    'interpolate',
-                                    ['linear'],
-                                    ['get', property],
-                                    0, 5,
-                                    1000, 50
-                                ],
-                                'circle-color': 'blue',
-                                'circle-opacity': 0.5
-                            },
-                            'filter': ['==', 'Word', '']
-                        });
-                    }
-                }
+    map.on('load', function () {
+        map.addSource('points', {
+            'type': 'geojson',
+            'data': geojson
+        });
 
-                // Create layer filter radio buttons
-                var layerFilterContainer = document.getElementById('layer-filter');
-                var uniqueWords = new Set(data.features.map(feature => feature.properties.Word));
-                uniqueWords.forEach(word => {
-                    var radio = document.createElement('input');
-                    radio.type = 'radio';
-                    radio.name = 'layer';
-                    radio.id = word;
-                    radio.value = word;
-                    radio.checked = true; // By default, all layers are checked
-                    radio.addEventListener('change', function(e) {
-                        var visibility = e.target.checked ? 'visible' : 'none';
-                        map.setLayoutProperty(e.target.value.replace(/\//g, '_'), 'visibility', visibility);
-                    });
-                    var label = document.createElement('label');
-                    label.htmlFor = word;
-                    label.textContent = word;
-                    layerFilterContainer.appendChild(radio);
-                    layerFilterContainer.appendChild(label);
-                    layerFilterContainer.appendChild(document.createElement('br'));
-                });
+        geojson.features.forEach((feature, index) => {
+            const layerId = 'layer_' + index;
+            map.addLayer({
+                'id': layerId,
+                'type': 'circle',
+                'source': 'points',
+                'paint': {
+                    'circle-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['get', "05/01/2020"],
+                        0, 5,
+                        130, 50
+                    ],
+                    'circle-color': 'blue',
+                    'circle-opacity': 0.5
+                },
+                'filter': ['==', ['get', 'Word'], feature.properties.Word]
             });
-        })
-        .catch(error => console.error('Error fetching GeoJSON data:', error));
+        });
 
-    // Define your temporal slider and other controls
-    var slider = document.getElementById('slider');
-    var playButton = document.getElementById('playButton');
-    var pauseButton = document.getElementById('pauseButton');
-    var restartButton = document.getElementById('restartButton');
-    var autoplayInterval;
+        // Initialize popup
+        const popup = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+        });
 
-    var months = ["05/01/2020", "06/01/2020", "07/01/2020", "08/01/2020", "09/01/2020", "10/01/2020", "11/01/2020", "12/01/2020", "1/1/2021", "2/1/2021", "3/1/2021", "4/1/2021", "5/1/2021"];
+        map.on('mouseenter', 'layer_0', function (e) {
+            map.getCanvas().style.cursor = 'pointer';
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const dateValue = e.features[0].properties[months[slider.value]];
+            popup.setLngLat(coordinates)
+                .setHTML(`Frequency: ${dateValue}`)
+                .addTo(map);
+        });
 
-    // Function to handle slider change
-    slider.addEventListener('input', function(e) {
-        var monthIndex = parseInt(e.target.value);
-        var selectedDate = months[monthIndex];
-        document.getElementById('selected-date').textContent = selectedDate;
-        // You can perform any action here based on the selected month
+        map.on('mouseleave', 'layer_0', function () {
+            map.getCanvas().style.cursor = '';
+            popup.remove();
+        });
+        const wordOptions = document.getElementById('word-options');
+        const uniqueWords = new Set(geojson.features.map(feature => feature.properties.Word));
+        uniqueWords.forEach(word => {
+            const option = document.createElement('input');
+            option.type = 'radio';
+            option.name = 'word';
+            option.value = word;
+            option.checked = true;
+            option.addEventListener('change', updateFilters);
+            const label = document.createElement('label');
+            label.htmlFor = word;
+            label.textContent = word;
+            wordOptions.appendChild(option);
+            wordOptions.appendChild(label);
+            wordOptions.appendChild(document.createElement('br'));
+        });
     });
 
-    // Function to handle play button click
-    playButton.addEventListener('click', function() {
-        autoplayInterval = setInterval(function() {
-            var currentValue = parseInt(slider.value);
-            if (currentValue < parseInt(slider.max)) {
+    function updateFilters() {
+        const wordFilters = Array.from(document.querySelectorAll('input[name="word"]:checked')).map(input => input.value);
+        geojson.features.forEach((feature, index) => {
+            const layerId = 'layer_' + index;
+            if (wordFilters.includes(feature.properties.Word)) {
+                map.setLayoutProperty(layerId, 'visibility', 'visible');
+            } else {
+                map.setLayoutProperty(layerId, 'visibility', 'none');
+            }
+        });
+    }
+
+    const slider = document.getElementById('slider');
+    const selectedDateSpan = document.getElementById('selected-date');
+    const months = ["05/01/2020", "06/01/2020", "07/01/2020", "08/01/2020", "09/01/2020", "10/01/2020", "11/01/2020", "12/01/2020", "1/1/2021", "2/1/2021", "3/1/2021", "4/1/2021", "5/1/2021"];
+
+    slider.addEventListener('input', function () {
+        const monthIndex = parseInt(slider.value);
+        const selectedDate = months[monthIndex];
+        selectedDateSpan.textContent = selectedDate;
+        updateMapForMonth(selectedDate);
+    });
+
+    function updateMapForMonth(selectedDate) {
+        geojson.features.forEach((feature, index) => {
+            const layerId = 'layer_' + index;
+            const dateValue = feature.properties[selectedDate];
+            map.setPaintProperty(layerId, 'circle-radius', [
+                'interpolate',
+                ['linear'],
+                ['literal', dateValue],
+                0, 5,
+                130, 50
+            ]);
+        });
+    }
+
+    const playButton = document.getElementById('playButton');
+    const pauseButton = document.getElementById('pauseButton');
+    const restartButton = document.getElementById('restartButton');
+    let autoplayInterval;
+
+    playButton.onclick = function() {
+        if (autoplayInterval) return;
+        autoplayInterval = setInterval(() => {
+            let currentValue = parseInt(slider.value);
+            let maxValue = parseInt(slider.max);
+            if (currentValue < maxValue) {
                 slider.value = currentValue + 1;
                 slider.dispatchEvent(new Event('input'));
             } else {
                 clearInterval(autoplayInterval);
+                autoplayInterval = null;
             }
-        }, 1000); // Change interval as needed (e.g., 1000ms = 1 second)
-    });
+        }, 1000);
+    };
 
-    // Function to handle pause button click
-    pauseButton.addEventListener('click', function() {
+    pauseButton.onclick = function() {
         clearInterval(autoplayInterval);
-    });
+        autoplayInterval = null;
+    };
 
-    // Function to handle restart button click
-    restartButton.addEventListener('click', function() {
+    restartButton.onclick = function() {
+        clearInterval(autoplayInterval);
+        autoplayInterval = null;
         slider.value = 0;
         slider.dispatchEvent(new Event('input'));
-    });
-
+    };
 </script>
 
 </body>

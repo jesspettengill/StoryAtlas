@@ -47,34 +47,59 @@
 									<p>An explanatory sequential research design</p>
 								</header>
 									<h3>Introduction</h3>
-									<p>One of the challenges of my project is that not only am I building a digital experience, but I’m attempting a new method of analysis. It is both new to my own research methods toolbox, and it is a process that is rarely used in my field.
+									<p>One of the challenges of this project is that not only is it meant to be a digital experience in public scholarship, but it also attempts to bring a relatively new method to news discourse analysis that is rarely used in the discipline.
 									</p>
 									<p>
-										NLP (or natural language processing) is a computational method that is often used in computation linguistics, social media analysis, and other big data research disciplines. However, in journalism, we tend to be fairly old school. Many of us journalism academics are former practicing journalists. Unless we’re interactive designers, we typically don’t have much training or knowledge of coding languages. And as researchers, we’re rarely trained in computational methods, but we are saturated in discourse analysis methods. Even quantitative studies like content analyses are typically coded by hand. But when looking at news narratives, hand coding makes analysis of large data trends extremely labor intensive.
+										NLP (or natural language processing) is a computational method that is often used in computation linguistics, social media analysis, and other big data research disciplines. However, journalism research often conducts analysis via handcoding. Additionally, there are few guides for conducting narrative analysis in media (Fulton, 2005; Graef, 2019). Additionally, few journalism researchers are trained in computational methods, even when conducting quantitative analyses like content analyses. But when looking at news narratives, hand coding makes analysis of large data trends extremely labor intensive.
 									</p>
 									<p>
-										For my project, I wanted to look at the differences between a national newspaper (The New York Times) and a local newspaper (The StarTribune) in coverage of the murder of George Floyd. What are the narratives that these papers are presenting to their audiences about the same event? How do they change over time? What meaning are they trying to make and imprint in our collective memory? The sample size I was looking at for this project quickly became overwhelming. In just the first month of coverage, there were 372 articles collected for this project (252 New York Times articles and 120 StarTribune articles). There would be no way I could conduct a discourse analysis of a sample size that large in a semester.
+										StoryAtlas aims to use computational analysis of news articles as a "way in" to deeper discourse analysis of news narratives that arise after a breaking news event. In the first iteration of StoryAtlas, the project examined ifferences between a national newspaper (The New York Times) and a local newspaper (The StarTribune) in a year's worth of coverage of the murder of George Floyd on May 25, 2020. Some of the guiding research questions of this project asked: What are the narratives that these papers are presenting to their audiences about the same event? How do they change over time? What meaning are they trying to make and imprint in our collective memory? 
+									<p>
+										The sample size of this first iteration was 1,214 articles. In order to analyze this large dataset, it was important to the public scholarship ethos of this project to conduct and publish the analysis using as many open source tools as possible.</p>	
 									</p>
 									<h3>Open Source Tools</h3>
 									<p>
-										Enter NLP. As someone who traditionally gravitates toward qualitative methods, NLP was an intimidating prospect. I spent many days agonizing over which NLP application to use. Many studies I have read use Google’s Word2Vec. My fellow CHI fellow Phil used spaCy. Eventually, I landed on using Natural Language Toolkit (NLTK). As an open-source NLP project, it has the advantage of the wisdom of crowds where the community is constantly updating and improving the project. My goal behind using NLP was to use it as a framing tool for further narrative analysis. In a sample as large as the one for this project, it can be overwhelming when attempting to “find a way in” to the data. The aim is to use NLP to identify the words that were most frequently used in relation to George Floyd’s name. These word embeddings would provide a quantitative starting point to further examine qualitative data: the narratives media created around Floyd’s murder.
+										Choosing the correct tools for this process was not just an ethical imperative, but also a project directive. It's important to note that all Natural Language Processing (NLP) applications are unique. Some are open source, and some are not. And each has a different philosophy of how to approach language processing. The NLP application chosen for StoryAtlas was <a href="https://www.nltk.org/index.html">Natural Language Toolkit (NLTK)</a>. As an open-source NLP project, it has the advantage of the wisdom of crowds (Surowiecki, 2004) where the community is constantly updating and improving the project. The aim is to use NLP to identify the words that were most frequently used in relation to George Floyd’s name.
+									</p>
+									<p>
+										In coordination with this project's partner organizations, one of the guidelines established early in the project was to use open sources tools to build the digital product in addtion to the data analysis. Open source tools that were used to build the digital experience for StoryAtlas included GitHub, HTML5UP, Unsplash, The Library of Congress, Visual Studio Code, and Mapbox. 
+									</p>
+									<p>
+										It's also important to note that ChatGPT was used for coding assistance on this project. Even though it is not an open source tool, it is an extremely helpful resource for novice coders.
 									</p>
 									<h3>Method</h3>
 									<p>
-										Step 1. Using Proquest Newsstream, I collected all articles from May 25, 2020 to June 1, 2021, using the search phrase “George Floyd” (N= 1,214).
+										An explanatory sequential research design uses quantitative data and analysis methods as an initial step to inform qualitative data collection and analysis. This project uses this design as a "way in" for narrative analysis of news.
 									</p>
 									<p>
-										Step 2. The data was collated by publication and publishing date.
+										Step 1. Using Proquest Newsstream, I collected all articles from The New York Times and Minneapolis Star Tribune published from May 25, 2020–June 1, 2021, using the search phrase “George Floyd” (N= 1,214).
 									</p>
 									<p>
-										Step 3. The 10 most common word embeddings for the articles published within a given month were assessed using NLTK’s NLP code. Stop words, such as “said” and “including” were incorporated into the analysis process. This resulted in 47 word embeddings for the New York Times sample and 35 embeddings for the StarTribune sample. (See collected data).
+										Step 2. The data was collated by publication and publishing date and formatted into a .txt file to prepare for NLP analysis.
 									</p>
 									<p>
-										Step 4. These embeddings will be used as a “way in” to analyze the data qualitatively. For example, “police” was consistently the most-used word in relation to stories about George Floyd, regardless of publication or publication date. The next step will be to qualitatively examine how these words play into the larger narrative conveyed about the “news event” we refer to as the murder of George Floyd.
+										Step 3. The 10 most common word embeddings for the articles published within a given month were assessed using NLTK. NLTK comes with a dictionary of extremely common English words, or"stop words," such as articles and numerals. Additional stop words, such as “said” and “including” were incorporated into the analysis process. This resulted in 47 most commonly used words associated with George Floyd, also called embeddings, for the New York Times sample and 35 embeddings for the StarTribune sample. <a href="https://docs.google.com/spreadsheets/d/1Mv0RJ3oGUwoqim5ROQch2pw0dMBN53RXYPeP49T-53Q/edit?usp=drive_link">(See collected data)</a>.
 									</p>
+									<p>
+										Step 4. These embeddings will be used as a “way in” to analyze the data qualitatively. For example, “police” was consistently the most-used word in relation to stories about George Floyd, regardless of publication or publication date. 
+									<h3>Initial Findings</h3>
+										<p>
+											One initial takeaway from the data at this point in the analysis is that The New York Times frequently used words "Trump," "president," and "law" in stories about George Floyd. Contrastingly, the Star Tribune used words such as "Chauvin," "trial," and "justice." This seems to indicate that as a national paper, the New York Times was more concerned with public sentiment around the murder of George Floyd and its effects on the upcoming 2020 election and its candidates, as well as potential implications for federal law. The Star Tribune, on the other hand, was more concerned about justice for the community by way of Chauvin's trial.
+										</p>
+										<p>
+											Another important initial finding is the difference between use of the word "death" versus "murder" in relation to George Floyd. While "death" was within the top three words for both publications, only the Star Tribune begins using "murder" within its most frequent embeddings in relation to articles about Floyd. This has important implications for journalism norms. Murder is only a term used in professional journalism once someone has been convicted. It's an important shielding practice in order to avoid potential litigation for slander. However, video evidence and public outcry for justice from the Minneapolis and Black communities seem to have influenced the Star Tribune to begin using "murder" nearly as frequently as "death" even before Chauvin was convicted in April 2021. 
+										</p>
+										<p>
+											The next step will be to more deeply examine the qualitative data to understand how these words play into the larger narrative conveyed about the “news event” we refer to as the murder of George Floyd.
+										</p>
 									<h3>Future Research</h3>
-									<p>Now with the quantitative portion of the data collected, further research can be conducted with the qualitative narratives collected in the sample. Some points of interest based on the collected data include: the use of "death" versus "murder", and the <em>Star Tribune's</em> focus on Chauvin's trial versus <em>The New York Time's</em> focus on the implications for the 2020 presidential election.</p>
-							</section>
+									<p>Now with the quantitative portion of the data collected, further research can be conducted with the qualitative narratives collected in the sample. Some points of interest based on the collected data include: the use of "death" versus "murder", and the <em>Star Tribune's</em> focus on Chauvin's trial versus <em>The New York Time's</em> focus on the implications for the 2020 presidential election. Additionally, larger samples can be collected in order to examine larger national trends. And finally, future research will aim to look at other news events such as natural disasters, mass shootings, or pandemics.</p>
+									<h3>References</h3>
+									<p> Fulton, H. (2005). <em>Narrative and Media.</em> University of New York Press.</p>
+									<p>Graef, J. (2019). Using narrative analysis to explore print news media stories of violent crime. In <em>Sage Research Methods Cases Part 2.</em>SAGE Publications, Ltd. https://doi.org/10.4135/9781526473233</p>
+									<p>Souto-Manning, M. (2014). Critical narrative analysis: The interplay of critical discourse and narrative analysis. <em>International Journal of Qualitative Studies in Education, 27</em>(2), 159–180. https://doi.org/10.1080/09518398.2012.737046</p>
+									<p>Suroweicki, J. (2004). <em>The Wisdom of Crowds: Why the Many Are Smarter than the Few and How Collective Wisdom Shapes Business, Economies, Societies and Nations.</em> Anchor Books.</p>
+								</section>
 
 					</div>				
 
