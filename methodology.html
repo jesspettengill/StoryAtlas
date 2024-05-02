@@ -1,9 +1,4 @@
 <!DOCTYPE HTML>
-<!--
-	Massively by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
 <html>
 	<head>
 		<title>StoryAtlas</title>
@@ -53,13 +48,13 @@
 										NLP (or natural language processing) is a computational method that is often used in computation linguistics, social media analysis, and other big data research disciplines. However, journalism research often conducts analysis via handcoding. Additionally, there are few guides for conducting narrative analysis in media (Fulton, 2005; Graef, 2019). Additionally, few journalism researchers are trained in computational methods, even when conducting quantitative analyses like content analyses. But when looking at news narratives, hand coding makes analysis of large data trends extremely labor intensive.
 									</p>
 									<p>
-										StoryAtlas aims to use computational analysis of news articles as a "way in" to deeper discourse analysis of news narratives that arise after a breaking news event. In the first iteration of StoryAtlas, the project examined ifferences between a national newspaper (The New York Times) and a local newspaper (The StarTribune) in a year's worth of coverage of the murder of George Floyd on May 25, 2020. Some of the guiding research questions of this project asked: What are the narratives that these papers are presenting to their audiences about the same event? How do they change over time? What meaning are they trying to make and imprint in our collective memory? 
+										StoryAtlas aims to use computational analysis of news articles as a "way in" to deeper discourse analysis of news narratives that arise after a breaking news event. In the first iteration of StoryAtlas, the project examined differences between a national newspaper (The New York Times) and a local newspaper (The StarTribune) in a year's worth of coverage of the murder of George Floyd on May 25, 2020. Some of the guiding research questions of this project asked: What are the narratives that these papers are presenting to their audiences about the same event? How do they change over time? What meaning are they trying to make and imprint in our collective memory? 
 									<p>
 										The sample size of this first iteration was 1,214 articles. In order to analyze this large dataset, it was important to the public scholarship ethos of this project to conduct and publish the analysis using as many open source tools as possible.</p>	
 									</p>
 									<h3>Open Source Tools</h3>
 									<p>
-										Choosing the correct tools for this process was not just an ethical imperative, but also a project directive. It's important to note that all Natural Language Processing (NLP) applications are unique. Some are open source, and some are not. And each has a different philosophy of how to approach language processing. The NLP application chosen for StoryAtlas was <a href="https://www.nltk.org/index.html">Natural Language Toolkit (NLTK)</a>. As an open-source NLP project, it has the advantage of the wisdom of crowds (Surowiecki, 2004) where the community is constantly updating and improving the project. The aim is to use NLP to identify the words that were most frequently used in relation to George Floyd’s name.
+										Choosing the correct tools for this process was not just an ethical imperative, but also a project directive. It's important to note that all Natural Language Processing (NLP) applications are unique. Some are open source, and some are not. And each has a different philosophy of how to approach language processing. The NLP application chosen for StoryAtlas was <a href="https://www.nltk.org/index.html">Natural Language Toolkit (NLTK)</a> and <a href="https://pypi.org/project/gensim/">Gensim</a>. NLTK is is a Python library that uses multiple NLP databases to anaylze text data by parsing, tagging, and word frequency counting, among other functions. Gensim is a Python library that uses Google's Word2Vec deep learning algorithm to conduct topic modelling, semantic analysis, and other more intricate textual analysis. The aim of using these open source, free tools is to use NLP to identify words that were most frequently used in coverage of George Floyd's murder, as well as conduct embedding analysis of words most associated with George Floyd's name.
 									</p>
 									<p>
 										In coordination with this project's partner organizations, one of the guidelines established early in the project was to use open sources tools to build the digital product in addtion to the data analysis. Open source tools that were used to build the digital experience for StoryAtlas included GitHub, HTML5UP, Unsplash, The Library of Congress, Visual Studio Code, and Mapbox. 
@@ -78,7 +73,7 @@
 										Step 2. The data was collated by publication and publishing date and formatted into a .txt file to prepare for NLP analysis.
 									</p>
 									<p>
-										Step 3. The 10 most common word embeddings for the articles published within a given month were assessed using NLTK. NLTK comes with a dictionary of extremely common English words, or"stop words," such as articles and numerals. Additional stop words, such as “said” and “including” were incorporated into the analysis process. This resulted in 47 most commonly used words associated with George Floyd, also called embeddings, for the New York Times sample and 35 embeddings for the StarTribune sample. <a href="https://docs.google.com/spreadsheets/d/1Mv0RJ3oGUwoqim5ROQch2pw0dMBN53RXYPeP49T-53Q/edit?usp=drive_link">(See collected data)</a>.
+										Step 3. The 10 most common words for the articles published within a given month were assessed using NLTK. NLTK comes with a dictionary of extremely common English words, or"stop words," such as articles and numerals. Additional stop words, such as “said” and “including” were incorporated into the analysis process. This resulted in 47 most commonly used words associated with George Floyd, also called embeddings, for the New York Times sample and 35 embeddings for the StarTribune sample. <a href="https://docs.google.com/spreadsheets/d/1Mv0RJ3oGUwoqim5ROQch2pw0dMBN53RXYPeP49T-53Q/edit?usp=drive_link">(See collected data)</a>.
 									</p>
 									<p>
 										Step 4. These embeddings will be used as a “way in” to analyze the data qualitatively. For example, “police” was consistently the most-used word in relation to stories about George Floyd, regardless of publication or publication date. 
@@ -93,6 +88,7 @@
 											The next step will be to more deeply examine the qualitative data to understand how these words play into the larger narrative conveyed about the “news event” we refer to as the murder of George Floyd.
 										</p>
 									<h3>Future Research</h3>
+									<p>The next step in this process would be to examine the word embeddings (or words most associated with Floyd's name) using Gensim. Because this part of the process takes a little time to train the Word2Vec algorithm, this step in the process will be complete at a later date.</p>
 									<p>Now with the quantitative portion of the data collected, further research can be conducted with the qualitative narratives collected in the sample. Some points of interest based on the collected data include: the use of "death" versus "murder", and the <em>Star Tribune's</em> focus on Chauvin's trial versus <em>The New York Time's</em> focus on the implications for the 2020 presidential election. Additionally, larger samples can be collected in order to examine larger national trends. And finally, future research will aim to look at other news events such as natural disasters, mass shootings, or pandemics.</p>
 									<h3>References</h3>
 									<p> Fulton, H. (2005). <em>Narrative and Media.</em> University of New York Press.</p>
